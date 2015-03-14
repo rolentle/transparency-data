@@ -1,198 +1,105 @@
 module TransparencyData
   class Client
-    def self.contributions(params)
+    def self.get_response(endpoint:, params: nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/contributions")
-      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
-      response = conn.get(endpoint, url_params)
+      endpoint = TransparencyData.api_endpoint(endpoint)
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      conn.get(endpoint, url_params)
+    end
+
+    def self.contributions(params)
+      response = get_response(endpoint: "/contributions", params: params)
       handle_response(response)
     end
 
     def self.lobbying(params)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/lobbying")
-      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/lobbying", params: params)
       handle_response(response)
     end
 
     def self.entities(params)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/entities")
-      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/entities", params: params)
       handle_response(response)
     end
 
     def self.id_lookup(params)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/entities/id_lookup")
-      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/entities/id_lookup", params: params)
       handle_response(response)
     end
 
     def self.entity(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/entities/#{id}")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/entities/#{id}", params: params)
       Hashie::Mash.new(JSON.parse(response.body))
     end
 
     def self.top_contributors(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/pol/#{id}/contributors", params: params)
       handle_response(response)
     end
 
     def self.top_sectors(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/sectors")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/pol/#{id}/contributors/sectors", params: params)
       sectors = handle_response(response)
       TransparencyData::Client.process_sectors(sectors)
     end
 
     def self.top_industries(id, sector, params=nil)
-      #sector variabl is no longer need by the Transparancy-Data
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/industries")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/pol/#{id}/contributors/industries", params: params)
       handle_response(response)
     end
 
     def self.local_breakdown(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/local_breakdown")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/pol/#{id}/contributors/local_breakdown", params: params)
       breakdown = Hashie::Mash.new(JSON.parse(response.body))
       process_local_breakdown(breakdown)
     end
 
     def self.contributor_type_breakdown(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/type_breakdown")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/pol/#{id}/contributors/type_breakdown", params: params)
       breakdown = Hashie::Mash.new(JSON.parse(response.body))
       process_contributor_type_breakdown(breakdown)
     end
 
     def self.top_recipient_orgs(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/indiv/#{id}/recipient_orgs")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/indiv/#{id}/recipient_orgs", params: params)
       handle_response(response)
     end
 
     def self.top_recipient_pols(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/indiv/#{id}/recipient_pols")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/indiv/#{id}/recipient_pols", params: params)
       handle_response(response)
     end
 
     def self.individual_party_breakdown(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/indiv/#{id}/recipients/party_breakdown")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/indiv/#{id}/recipients/party_breakdown", params: params)
       breakdown = Hashie::Mash.new(JSON.parse(response.body))
       process_party_breakdown(breakdown)
     end
 
     def self.top_org_recipients(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/org/#{id}/recipients", params: params)
       handle_response(response)
     end
 
     def self.org_party_breakdown(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients/party_breakdown")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/org/#{id}/recipients/party_breakdown", params: params)
       breakdown = Hashie::Mash.new(JSON.parse(response.body))
       process_org_party_breakdown(breakdown)
     end
 
     def self.org_level_breakdown(id, params=nil)
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients/level_breakdown")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/org/#{id}/recipients/level_breakdown", params: params)
       breakdown = Hashie::Mash.new(JSON.parse(response.body))
       process_org_level_breakdown(breakdown)
     end
 
     def self.recipient_contributor_summary(recipient_id, contributor_id, params=nil)
       #TODO: is endpoint deprecated?"
-      conn = Faraday.new(url: TransparencyData.api_domain)
-      endpoint = TransparencyData.api_endpoint("/aggregates/recipient/#{recipient_id}/contributor/#{contributor_id}/amount")
-      url_params = if params
-                     prepare_params(params).merge(apikey: TransparencyData.api_key)
-                   else
-                     { apikey: TransparencyData.api_key }
-                   end
-      response = conn.get(endpoint, url_params)
+      response = get_response(endpoint: "/aggregates/recipient/#{recipient_id}/contributor/#{contributor_id}/amount", params: params)
       Hashie::Mash.new(JSON.parse(response.body))
     end
 
