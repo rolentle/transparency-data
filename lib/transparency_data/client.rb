@@ -8,14 +8,6 @@ module TransparencyData
       handle_response(response)
     end
 
-    #   get(:contributions) do |api_params|
-    #     uri TransparencyData.api_url("/contributions")
-    #     params TransparencyData::Client.prepare_params(api_params)
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
-
     def self.lobbying(params)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/lobbying")
@@ -23,14 +15,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-
-    #   get(:lobbying) do |api_params|
-    #     uri TransparencyData.api_url("/lobbying")
-    #     params TransparencyData::Client.prepare_params(api_params)
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
 
     def self.entities(params)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -40,14 +24,6 @@ module TransparencyData
       handle_response(response)
     end
 
-    #   get(:entities) do |api_params|
-    #     uri TransparencyData.api_url("/entities")
-    #     params TransparencyData::Client.prepare_params(api_params)
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
-
     def self.id_lookup(params)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/entities/id_lookup")
@@ -55,14 +31,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-
-    #   get(:id_lookup) do |api_params|
-    #     uri TransparencyData.api_url("/entities/id_lookup")
-    #     params TransparencyData::Client.prepare_params(api_params)
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
 
     def self.entity(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -76,14 +44,6 @@ module TransparencyData
       Hashie::Mash.new(JSON.parse(response.body))
     end
 
-    #   get(:entity) do |id, api_params|
-    #     uri TransparencyData.api_url("/entities/#{id}")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       Hashie::Mash.new(JSON.parse(response.body))
-    #     end
-    #   end
-
     def self.top_contributors(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors")
@@ -95,14 +55,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-    #   get(:top_contributors) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
-
 
     def self.top_sectors(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -117,16 +69,6 @@ module TransparencyData
       TransparencyData::Client.process_sectors(sectors)
     end
 
-    #   get(:top_sectors) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/sectors")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       sectors = TransparencyData::Client.handle_response(response)
-    #       TransparencyData::Client.process_sectors(sectors)
-    #     end
-    #   end
-
-
     def self.top_industries(id, sector, params=nil)
       #sector variabl is no longer need by the Transparancy-Data
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -139,14 +81,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-
-    #   get(:top_industries) do |id, sector, api_params|
-    #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/sector/#{sector}/industries")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
 
     def self.local_breakdown(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -161,15 +95,6 @@ module TransparencyData
       process_local_breakdown(breakdown)
     end
 
-    #   get(:local_breakdown) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/local_breakdown")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
-    #       TransparencyData::Client.process_local_breakdown(breakdown)
-    #     end
-    #   end
-
     def self.contributor_type_breakdown(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/type_breakdown")
@@ -183,15 +108,6 @@ module TransparencyData
       process_contributor_type_breakdown(breakdown)
     end
 
-    #   get(:contributor_type_breakdown) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/type_breakdown")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
-    #       TransparencyData::Client.process_contributor_type_breakdown(breakdown)
-    #     end
-    #   end
-
     def self.top_recipient_orgs(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/indiv/#{id}/recipient_orgs")
@@ -204,14 +120,6 @@ module TransparencyData
       handle_response(response)
     end
 
-    #   get(:top_recipient_orgs) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/indiv/#{id}/recipient_orgs")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
-
     def self.top_recipient_pols(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/indiv/#{id}/recipient_pols")
@@ -223,14 +131,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-
-    #   get(:top_recipient_pols) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/indiv/#{id}/recipient_pols")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
 
     def self.individual_party_breakdown(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -245,15 +145,6 @@ module TransparencyData
       process_party_breakdown(breakdown)
     end
 
-    #   get(:individual_party_breakdown) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/indiv/#{id}/recipients/party_breakdown")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
-    #       TransparencyData::Client.process_party_breakdown(breakdown)
-    #     end
-    #   end
-
     def self.top_org_recipients(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients")
@@ -265,14 +156,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       handle_response(response)
     end
-
-    #   get(:top_org_recipients) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       TransparencyData::Client.handle_response(response)
-    #     end
-    #   end
 
     def self.org_party_breakdown(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -287,15 +170,6 @@ module TransparencyData
       process_org_party_breakdown(breakdown)
     end
 
-    #   get(:org_party_breakdown) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients/party_breakdown")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
-    #       TransparencyData::Client.process_org_party_breakdown(breakdown)
-    #     end
-    #   end
-
     def self.org_level_breakdown(id, params=nil)
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients/level_breakdown")
@@ -309,15 +183,6 @@ module TransparencyData
       process_org_level_breakdown(breakdown)
     end
 
-    #   get(:org_level_breakdown) do |id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients/level_breakdown")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
-    #       TransparencyData::Client.process_org_level_breakdown(breakdown)
-    #     end
-    #   end
-
     def self.recipient_contributor_summary(recipient_id, contributor_id, params=nil)
       #TODO: is endpoint deprecated?"
       conn = Faraday.new(url: TransparencyData.api_domain)
@@ -330,18 +195,6 @@ module TransparencyData
       response = conn.get(endpoint, url_params)
       Hashie::Mash.new(JSON.parse(response.body))
     end
-
-    #   get(:recipient_contributor_summary) do |recipient_id, contributor_id, api_params|
-    #     uri TransparencyData.api_url("/aggregates/recipient/#{recipient_id}/contributor/#{contributor_id}/amount")
-    #     params TransparencyData::Client.prepare_params(api_params) if api_params
-    #     handler do |response|
-    #       Hashie::Mash.new(JSON.parse(response.body))
-    #     end
-    #   end
-
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
 
     def self.prepare_params(params)
       params.each do |key, value|
