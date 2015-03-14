@@ -5,7 +5,7 @@ Hash.send :include, Hashie::HashExtensions
 
 module TransparencyData
 
-  VERSION = "0.0.4".freeze
+  VERSION = "1.0.0".freeze
 
   def self.configure
     yield self
