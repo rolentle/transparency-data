@@ -41,16 +41,14 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "when searching lobbyists" do
-
-    #   it "return a list of lobbying events" do
-    #     VCR.use_cassette('lobbying events') do
-    #       lobbying = TransparencyData::Client.lobbying(:client_ft => "apple inc")
-    #       assert_equal lobbying.class, Array
-    #     end
-    #   end
-
-    # end
+    describe "when searching lobbyists" do
+      it "return a list of lobbying events" do
+        VCR.use_cassette('lobbying events') do
+          lobbying = TransparencyData::Client.lobbying(:client_ft => "apple inc")
+          assert_equal lobbying.class, Array
+        end
+      end
+    end
 
     # describe "when searching entities" do
 

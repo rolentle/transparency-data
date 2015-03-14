@@ -8,10 +8,6 @@ module TransparencyData
       handle_response(response)
     end
 
-  #   defaults do
-  #     params :apikey => TransparencyData.api_key
-  #   end
-
   #   get(:contributions) do |api_params|
   #     uri TransparencyData.api_url("/contributions")
   #     params TransparencyData::Client.prepare_params(api_params)
@@ -20,6 +16,14 @@ module TransparencyData
   #     end
   #   end
 
+  def self.lobbying(params)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/lobbying")
+      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+  end
+
   #   get(:lobbying) do |api_params|
   #     uri TransparencyData.api_url("/lobbying")
   #     params TransparencyData::Client.prepare_params(api_params)
@@ -27,6 +31,12 @@ module TransparencyData
   #       TransparencyData::Client.handle_response(response)
   #     end
   #   end
+
+  #   defaults do
+  #     params :apikey => TransparencyData.api_key
+  #   end
+
+
 
   #   get(:entities) do |api_params|
   #     uri TransparencyData.api_url("/entities")
