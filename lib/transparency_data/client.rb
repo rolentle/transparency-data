@@ -64,9 +64,17 @@ module TransparencyData
     #     end
     #   end
 
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
+    def self.entity(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/entities/#{id}")
+      url_params = if params
+        prepare_params(params).merge(apikey: TransparencyData.api_key)
+      else
+       { apikey: TransparencyData.api_key }
+      end
+      response = conn.get(endpoint, url_params)
+      Hashie::Mash.new(JSON.parse(response.body))
+    end
 
     #   get(:entity) do |id, api_params|
     #     uri TransparencyData.api_url("/entities/#{id}")
@@ -74,6 +82,10 @@ module TransparencyData
     #     handler do |response|
     #       Hashie::Mash.new(JSON.parse(response.body))
     #     end
+    #   end
+
+    #   defaults do
+    #     params :apikey => TransparencyData.api_key
     #   end
 
     #   get(:top_contributors) do |id, api_params|

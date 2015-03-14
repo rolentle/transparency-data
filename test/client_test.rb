@@ -68,26 +68,23 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "when getting one entity" do
+    describe "when getting one entity" do
+      before do
+        VCR.use_cassette('politician id') do
+          entities = TransparencyData::Client.entities(:search => "nancy pelosi")
+          entities.each { |entity| @pelosi_id = entity.id if entity['type'] == "politician" }
+        end
+      end
 
-    #   before do
-    #     entities = TransparencyData::Client.entities(:search => "nancy pelosi")
-    #     entities.each do |entity|
-    #       @pelosi_id = entity.id if entity['type'] == "politician"
-    #     end
-    #   end
-
-    #   it "return an entity" do
-    #     VCR.use_cassette('entity') do
-    #       entity = TransparencyData::Client.entity(@pelosi_id)
-    #       assert_equal entity.name, "Nancy Pelosi (D)"
-    #     end
-    #   end
-
-    # end
+      it "return an entity" do
+        VCR.use_cassette('entity') do
+          entity = TransparencyData::Client.entity(@pelosi_id)
+          assert_equal entity.name, "Nancy Pelosi (D)"
+        end
+      end
+    end
 
     # describe "politician methods" do
-
     #   before do
     #     entities = TransparencyData::Client.entities(:search => "nancy pelosi")
     #     entities.each do |entity|
