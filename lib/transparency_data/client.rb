@@ -47,10 +47,14 @@ module TransparencyData
     #       TransparencyData::Client.handle_response(response)
     #     end
     #   end
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
 
+    def self.id_lookup(params)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/entities/id_lookup")
+      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+    end
 
     #   get(:id_lookup) do |api_params|
     #     uri TransparencyData.api_url("/entities/id_lookup")
@@ -58,6 +62,10 @@ module TransparencyData
     #     handler do |response|
     #       TransparencyData::Client.handle_response(response)
     #     end
+    #   end
+
+    #   defaults do
+    #     params :apikey => TransparencyData.api_key
     #   end
 
     #   get(:entity) do |id, api_params|

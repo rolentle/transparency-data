@@ -59,16 +59,14 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "when looking up by entity ids" do
-
-    #   it "return a list of entity ids" do
-    #     VCR.use_cassette('entity ids') do
-    #       entity_ids = TransparencyData::Client.id_lookup(:namespace => "urn:crp:recipient", :id => "N00007360")
-    #       assert_kind_of entity_ids, Array
-    #     end
-    #   end
-
-    # end
+    describe "when looking up by entity ids" do
+      it "return a list of entity ids" do
+        VCR.use_cassette('entity ids') do
+          entity_ids = TransparencyData::Client.id_lookup(:namespace => "urn:crp:recipient", :id => "N00007360")
+          assert_kind_of Array, entity_ids
+        end
+      end
+    end
 
     # describe "when getting one entity" do
 
