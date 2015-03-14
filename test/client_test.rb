@@ -50,16 +50,14 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "when searching entities" do
-
-    #   it "return a list of entities" do
-    #     VCR.use_cassette('entities') do
-    #       entities = TransparencyData::Client.entities(:search => "nancy pelosi")
-    #       assert_equal entities.class, Array
-    #     end
-    #   end
-
-    # end
+    describe "when searching entities" do
+      it "return a list of entities" do
+        VCR.use_cassette('entities') do
+          entities = TransparencyData::Client.entities(:search => "nancy pelosi")
+          assert_equal entities.class, Array
+        end
+      end
+    end
 
     # describe "when looking up by entity ids" do
 
