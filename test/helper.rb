@@ -1,11 +1,8 @@
 gem 'minitest'
 require 'minitest/autorun'
-require 'yaml'
-require 'pathname'
-
-require 'shoulda'
-require 'mocha'
 require 'vcr'
+require 'pathname'
+require 'yaml'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))

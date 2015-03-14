@@ -1,6 +1,5 @@
 require 'hashie'
 require 'json'
-require 'monster_mash'
 
 Hash.send :include, Hashie::HashExtensions
 

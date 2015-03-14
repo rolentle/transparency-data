@@ -13,15 +13,12 @@ Gem::Specification.new do |s|
   ]
   s.has_rdoc          = false
   s.files             = %w[README.md lib/transparency_data.rb lib/transparency_data/client.rb]
-  s.add_dependency("rake")
-  s.add_dependency("monster_mash", "~> 0.1.0")
+  s.add_dependency("faraday", "= 0.8")
   s.add_dependency("hashie", "~> 0.2.0")
-  s.add_development_dependency("yard", ">= 0")
-  s.add_development_dependency("shoulda", ">= 2.10.1")
-  s.add_development_dependency("jnunemaker-matchy", "= 0.4.0")
-  s.add_development_dependency("faraday", "= 0.8")
+  s.add_dependency("rake")
+  s.add_development_dependency("mg", ">= 0.0.8")
+  s.add_development_dependency("minitest", ">= 0")
   s.add_development_dependency("pry", ">= 0")
   s.add_development_dependency("vcr", ">= 0.4.1")
-  s.add_development_dependency("mg", ">= 0.0.8")
-  s.add_development_dependency("mocha", ">= 0.9.8")
+  s.add_development_dependency("yard", ">= 0")
 end
