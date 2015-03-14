@@ -87,8 +87,8 @@ class ClientTest < Minitest::Test
     describe "politician methods" do
       before do
         VCR.use_cassette('politician id') do
-        entities = TransparencyData::Client.entities(:search => "nancy pelosi")
-        entities.each { |entity| @pelosi_id = entity.id if entity['type'] == "politician" }
+          entities = TransparencyData::Client.entities(:search => "nancy pelosi")
+          entities.each { |entity| @pelosi_id = entity.id if entity['type'] == "politician" }
         end
       end
 
@@ -139,95 +139,93 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "individual (contributor) methods" do
+    describe "individual (contributor) methods" do
+      before do
+        VCR.use_cassette('individual id') do
+          entities = TransparencyData::Client.entities(:search => "boone pickens")
+          entities.each { |entity| @boone_id = entity.id if entity['type'] == "individual" }
+        end
+      end
 
-    #   before do
-    #     entities = TransparencyData::Client.entities(:search => "boone pickens")
-    #     entities.each do |entity|
-    #       @boone_id = entity.id if entity['type'] == "individual"
-    #     end
-    #   end
+      it "return a list of top recipient organizations" do
+        VCR.use_cassette('top recipient organizations') do
+          recipient_orgs = TransparencyData::Client.top_recipient_orgs(@boone_id)
+          assert_equal recipient_orgs.class, Array
+          assert_equal recipient_orgs.length, 10
+        end
+      end
 
-    #   it "return a list of top recipient organizations" do
-    #     VCR.use_cassette('top recipient organizations') do
-    #       recipient_orgs = TransparencyData::Client.top_recipient_orgs(@boone_id)
-    #       assert_equal recipient_orgs.class, Array
-    #       assert_equal recipient_orgs.length, 10
-    #     end
-    #   end
+        it "return a list of top recipient politicians" do
+          VCR.use_cassette('top recipient politicians') do
+            recipient_pols = TransparencyData::Client.top_recipient_pols(@boone_id)
+            assert_equal recipient_pols.class, Array
+            assert_equal recipient_pols.length, 10
+          end
+        end
 
-    #   it "return a list of top recipient politicians" do
-    #     VCR.use_cassette('top recipient politicians') do
-    #       recipient_pols = TransparencyData::Client.top_recipient_pols(@boone_id)
-    #       assert_equal recipient_pols.class, Array
-    #       assert_equal recipient_pols.length, 10
-    #     end
-    #   end
+        it "return a party breakdown" do
+          VCR.use_cassette('individual party breakdown') do
+            party_breakdown = TransparencyData::Client.individual_party_breakdown(@boone_id)
+            assert_equal party_breakdown.dem_count, party_breakdown["Democrats"][0].to_i
+          end
+        end
+      end
 
-    #   it "return a party breakdown" do
-    #     VCR.use_cassette('individual party breakdown') do
-    #       party_breakdown = TransparencyData::Client.individual_party_breakdown(@boone_id)
-    #       assert_equal party_breakdown.dem_count, party_breakdown["Democrats"][0]
-    #     end
-    #   end
+      # describe "organization methods" do
 
-    # end
+      #   before do
+      #     entities = TransparencyData::Client.entities(:search => "wal-mart")
+      #     entities.each do |entity|
+      #       @walmart_id = entity.id if entity['type'] == "organization"
+      #     end
+      #   end
 
-    # describe "organization methods" do
+      #   it "return a list of top organization recipients" do
+      #     VCR.use_cassette('top org recipients') do
+      #       org_recipients = TransparencyData::Client.top_org_recipients(@walmart_id)
+      #       assert_equal org_recipients.class, Array
+      #       assert_equal org_recipients.length, 10
+      #     end
+      #   end
 
-    #   before do
-    #     entities = TransparencyData::Client.entities(:search => "wal-mart")
-    #     entities.each do |entity|
-    #       @walmart_id = entity.id if entity['type'] == "organization"
-    #     end
-    #   end
+      #   it "return a party breakdown" do
+      #     VCR.use_cassette('org party breakdown') do
+      #       party_breakdown = TransparencyData::Client.org_party_breakdown(@walmart_id)
+      #       assert_equal party_breakdown.dem_count, party_breakdown["Democrats"][0]
+      #     end
+      #   end
 
-    #   it "return a list of top organization recipients" do
-    #     VCR.use_cassette('top org recipients') do
-    #       org_recipients = TransparencyData::Client.top_org_recipients(@walmart_id)
-    #       assert_equal org_recipients.class, Array
-    #       assert_equal org_recipients.length, 10
-    #     end
-    #   end
+      #   it "return a state/federal level breakdown" do
+      #     VCR.use_cassette('org level breakdown') do
+      #       level_breakdown = TransparencyData::Client.org_level_breakdown(@walmart_id)
+      #       assert_equal level_breakdown.federal_count, level_breakdown["Federal"][0]
+      #     end
+      #   end
 
-    #   it "return a party breakdown" do
-    #     VCR.use_cassette('org party breakdown') do
-    #       party_breakdown = TransparencyData::Client.org_party_breakdown(@walmart_id)
-    #       assert_equal party_breakdown.dem_count, party_breakdown["Democrats"][0]
-    #     end
-    #   end
+      # end
 
-    #   it "return a state/federal level breakdown" do
-    #     VCR.use_cassette('org level breakdown') do
-    #       level_breakdown = TransparencyData::Client.org_level_breakdown(@walmart_id)
-    #       assert_equal level_breakdown.federal_count, level_breakdown["Federal"][0]
-    #     end
-    #   end
+      # describe "recipient methods" do
 
-    # end
+      #   before do
+      #     boone = TransparencyData::Client.entities(:search => "t boone pickens")
+      #     boone.each do |entity|
+      #       @boone_id = entity.id if entity['type'] == "individual"
+      #     end
+      #     ted = TransparencyData::Client.entities(:search => "ted stevens")
+      #     ted.each do |entity|
+      #       @stevens_id = entity.id if entity['type'] == "politician"
+      #     end
+      #   end
 
-    # describe "recipient methods" do
+      #   it "return a contributor summary" do
+      #     VCR.use_cassette('recipient contributor summary') do
+      #       summary = TransparencyData::Client.recipient_contributor_summary(@stevens_id, @boone_id)
+      #       assert_equal summary.amount.class, Fixnum
+      #     end
+      #   end
 
-    #   before do
-    #     boone = TransparencyData::Client.entities(:search => "t boone pickens")
-    #     boone.each do |entity|
-    #       @boone_id = entity.id if entity['type'] == "individual"
-    #     end
-    #     ted = TransparencyData::Client.entities(:search => "ted stevens")
-    #     ted.each do |entity|
-    #       @stevens_id = entity.id if entity['type'] == "politician"
-    #     end
-    #   end
+      # end
 
-    #   it "return a contributor summary" do
-    #     VCR.use_cassette('recipient contributor summary') do
-    #       summary = TransparencyData::Client.recipient_contributor_summary(@stevens_id, @boone_id)
-    #       assert_equal summary.amount.class, Fixnum
-    #     end
-    #   end
-
-    # end
+    end
 
   end
-
-end
