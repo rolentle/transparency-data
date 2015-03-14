@@ -1,0 +1,39 @@
+PATH
+  remote: .
+  specs:
+    transparency_data (0.0.4)
+      faraday (= 0.8)
+      hashie (~> 0.2.0)
+      rake
+
+GEM
+  remote: http://www.rubygems.org/
+  specs:
+    coderay (1.1.0)
+    faraday (0.8.0)
+      multipart-post (~> 1.1)
+    hashie (0.2.2)
+    method_source (0.8.2)
+    mg (0.0.8)
+      rake
+    minitest (5.5.1)
+    multipart-post (1.2.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    rake (10.4.2)
+    slop (3.6.0)
+    vcr (2.9.3)
+    yard (0.8.7.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mg (>= 0.0.8)
+  minitest
+  pry
+  transparency_data!
+  vcr (>= 0.4.1)
+  yard

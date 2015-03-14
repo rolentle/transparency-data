@@ -59,15 +59,6 @@ As described in the API docs, the TransparencyData.com API supports a special sy
                                            
 ## Contributing
 
-Required gems for running tests:
-
-* mg
-* shoulda
-* jnunemaker-matchy
-* mocha
-* fakeweb
-* vcr
-
 Run the test suite:
 
     rake test
