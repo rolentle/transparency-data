@@ -1,8 +1,6 @@
 require 'hashie'
 require 'json'
 
-Hash.send :include, Hashie::HashExtensions
-
 module TransparencyData
 
   VERSION = "1.0.0".freeze
