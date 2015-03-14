@@ -68,10 +68,10 @@ module TransparencyData
       conn = Faraday.new(url: TransparencyData.api_domain)
       endpoint = TransparencyData.api_endpoint("/entities/#{id}")
       url_params = if params
-        prepare_params(params).merge(apikey: TransparencyData.api_key)
-      else
-       { apikey: TransparencyData.api_key }
-      end
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
       response = conn.get(endpoint, url_params)
       Hashie::Mash.new(JSON.parse(response.body))
     end
@@ -84,10 +84,17 @@ module TransparencyData
     #     end
     #   end
 
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
-
+    def self.top_contributors(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+    end
     #   get(:top_contributors) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors")
     #     params TransparencyData::Client.prepare_params(api_params) if api_params
@@ -95,6 +102,20 @@ module TransparencyData
     #       TransparencyData::Client.handle_response(response)
     #     end
     #   end
+
+
+    def self.top_sectors(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/sectors")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      sectors = handle_response(response)
+      TransparencyData::Client.process_sectors(sectors)
+    end
 
     #   get(:top_sectors) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/sectors")
@@ -105,6 +126,20 @@ module TransparencyData
     #     end
     #   end
 
+
+    def self.top_industries(id, sector, params=nil)
+      #sector variabl is no longer need by the Transparancy-Data
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/industries")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+    end
+
     #   get(:top_industries) do |id, sector, api_params|
     #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/sector/#{sector}/industries")
     #     params TransparencyData::Client.prepare_params(api_params) if api_params
@@ -113,6 +148,18 @@ module TransparencyData
     #     end
     #   end
 
+    def self.local_breakdown(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/local_breakdown")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      breakdown = Hashie::Mash.new(JSON.parse(response.body))
+      process_local_breakdown(breakdown)
+    end
 
     #   get(:local_breakdown) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/local_breakdown")
@@ -123,6 +170,19 @@ module TransparencyData
     #     end
     #   end
 
+    def self.contributor_type_breakdown(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/pol/#{id}/contributors/type_breakdown")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      breakdown = Hashie::Mash.new(JSON.parse(response.body))
+      process_contributor_type_breakdown(breakdown)
+    end
+
     #   get(:contributor_type_breakdown) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/pol/#{id}/contributors/type_breakdown")
     #     params TransparencyData::Client.prepare_params(api_params) if api_params
@@ -130,6 +190,10 @@ module TransparencyData
     #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
     #       TransparencyData::Client.process_contributor_type_breakdown(breakdown)
     #     end
+    #   end
+
+    #   defaults do
+    #     params :apikey => TransparencyData.api_key
     #   end
 
     #   get(:top_recipient_orgs) do |id, api_params|
@@ -216,39 +280,41 @@ module TransparencyData
       JSON.parse(response.body).map {|c| Hashie::Mash.new(c)}
     end
 
-    #   def self.process_sectors(sectors)
-    #     sectors.each do |sector|
-    #       sector["name"] = case sector.sector
-    #         when "A" then "Agribusiness"
-    #         when "B" then "Communications/Electronics"
-    #         when "C" then "Construction"
-    #         when "D" then "Defense"
-    #         when "E" then "Energy/Natural Resources"
-    #         when "F" then "Finance/Insurance/Real Estate"
-    #         when "H" then "Health"
-    #         when "K" then "Lawyers/Lobbyists"
-    #         when "M" then "Transportation"
-    #         when "N" then "Misc. Business"
-    #         when "Q" then "Ideology/Single Issue"
-    #         when "P" then "Labor"
-    #         when "W" then "Other"
-    #         when "Y" then "Unknown"
-    #         when "Z" then "Administrative Use"
-    #       end
-    #     end
-    #   end
+    def self.process_sectors(sectors)
+      sectors.each do |sector|
+        sector["name"] = case sector.sector
+                         when "A" then "Agribusiness"
+                         when "B" then "Communications/Electronics"
+                         when "C" then "Construction"
+                         when "D" then "Defense"
+                         when "E" then "Energy/Natural Resources"
+                         when "F" then "Finance/Insurance/Real Estate"
+                         when "H" then "Health"
+                         when "K" then "Lawyers/Lobbyists"
+                         when "M" then "Transportation"
+                         when "N" then "Misc. Business"
+                         when "Q" then "Ideology/Single Issue"
+                         when "P" then "Labor"
+                         when "W" then "Other"
+                         when "Y" then "Unknown"
+                         when "Z" then "Administrative Use"
+                         end
+      end
+    end
 
-    #   def self.process_local_breakdown(breakdown)
-    #     TransparencyData::Client.mashize_key(breakdown, "in-state", "in_state")
-    #     TransparencyData::Client.mashize_key(breakdown, "out-of-state", "out_of_state")
-    #     breakdown
-    #   end
+      def self.process_local_breakdown(breakdown)
+        TransparencyData::Client.mashize_key(breakdown, "in-state", "in_state")
+        TransparencyData::Client.mashize_key(breakdown, "out-of-state", "out_of_state")
+        TransparencyData::Client.mashize_key(breakdown, "In-State", "in_state")
+        TransparencyData::Client.mashize_key(breakdown, "Out-of-State", "out_of_state")
+        breakdown
+      end
 
-    #   def self.process_contributor_type_breakdown(breakdown)
-    #     TransparencyData::Client.mashize_key(breakdown, "Individuals", "individual")
-    #     TransparencyData::Client.mashize_key(breakdown, "PACs", "pac")
-    #     breakdown
-    #   end
+      def self.process_contributor_type_breakdown(breakdown)
+        TransparencyData::Client.mashize_key(breakdown, "Individuals", "individual")
+        TransparencyData::Client.mashize_key(breakdown, "PACs", "pac")
+        breakdown
+      end
 
     #   def self.process_party_breakdown(breakdown)
     #     TransparencyData::Client.mashize_key(breakdown, "Democrats", "dem")
@@ -278,11 +344,11 @@ module TransparencyData
     #     breakdown
     #   end
 
-    #   def self.mashize_key(breakdown, api_key, mash_key)
-    #     if breakdown[api_key]
-    #       breakdown["#{mash_key}_count"]  = breakdown[api_key][0].to_i
-    #       breakdown["#{mash_key}_amount"] = breakdown[api_key][1].to_f
-    #     end
-    #   end
+      def self.mashize_key(breakdown, api_key, mash_key)
+        if breakdown[api_key]
+          breakdown["#{mash_key}_count"]  = breakdown[api_key][0].to_i
+          breakdown["#{mash_key}_amount"] = breakdown[api_key][1].to_f
+        end
+      end
   end
 end

@@ -84,61 +84,60 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "politician methods" do
-    #   before do
-    #     entities = TransparencyData::Client.entities(:search => "nancy pelosi")
-    #     entities.each do |entity|
-    #       @pelosi_id = entity.id if entity['type'] == "politician"
-    #     end
-    #   end
+    describe "politician methods" do
+      before do
+        VCR.use_cassette('politician id') do
+        entities = TransparencyData::Client.entities(:search => "nancy pelosi")
+        entities.each { |entity| @pelosi_id = entity.id if entity['type'] == "politician" }
+        end
+      end
 
-    #   it "return a list of top contributors" do
-    #     VCR.use_cassette('top contributors') do
-    #       contributors = TransparencyData::Client.top_contributors(@pelosi_id)
-    #       assert_equal contributors.class, Array
-    #       assert_equal contributors.length, 10
-    #     end
-    #   end
+      it "return a list of top contributors" do
+        VCR.use_cassette('top contributors') do
+          contributors = TransparencyData::Client.top_contributors(@pelosi_id)
+          assert_equal contributors.class, Array
+          assert_equal contributors.length, 10
+        end
+      end
 
-    #   it "return a list of 5 top contributors" do
-    #     VCR.use_cassette('top 5 contributors') do
-    #       contributors = TransparencyData::Client.top_contributors(@pelosi_id, :limit => 5)
-    #       assert_equal contributors.class, Array
-    #       assert_equal contributors.length, 5
-    #     end
-    #   end
+      it "return a list of 5 top contributors" do
+        VCR.use_cassette('top 5 contributors') do
+          contributors = TransparencyData::Client.top_contributors(@pelosi_id, :limit => 5)
+          assert_equal contributors.class, Array
+          assert_equal contributors.length, 5
+        end
+      end
 
-    #   it "return a list of top sectors" do
-    #     VCR.use_cassette('top sectors') do
-    #       sectors = TransparencyData::Client.top_sectors(@pelosi_id)
-    #       assert_equal sectors.class, Array
-    #       assert_equal sectors.first.name.class, String
-    #     end
-    #   end
+      it "return a list of top sectors" do
+        VCR.use_cassette('top sectors') do
+          sectors = TransparencyData::Client.top_sectors(@pelosi_id)
+          assert_equal sectors.class, Array
+          assert_equal sectors.first.name.class, String
+        end
+      end
 
-    #   it "return a list of top industries within sector" do
-    #     VCR.use_cassette('top industries within sector') do
-    #       industries = TransparencyData::Client.top_industries(@pelosi_id,"F")
-    #       assert_equal industries.class, Array
-    #       assert_equal industries.first.count.class, Fixnum
-    #     end
-    #   end
+      it "return a list of top industries within sector" do
+        VCR.use_cassette('top industries within sector') do
+          industries = TransparencyData::Client.top_industries(@pelosi_id,"F")
+          assert_equal industries.class, Array
+          assert_equal industries.first.count.class, Fixnum
+        end
+      end
 
-    #   it "return a local breakdown" do
-    #     VCR.use_cassette('local breakdown') do
-    #       local_breakdown = TransparencyData::Client.local_breakdown(@pelosi_id)
-    #       assert_equal local_breakdown.in_state_amount.class, Float
-    #     end
-    #   end
+      it "return a local breakdown" do
+        VCR.use_cassette('local breakdown') do
+          local_breakdown = TransparencyData::Client.local_breakdown(@pelosi_id)
+          assert_equal local_breakdown.in_state_amount.class, Float
+        end
+      end
 
-    #   it "return a contributor type breakdown" do
-    #     VCR.use_cassette('contributor type breakdown') do
-    #       local_breakdown = TransparencyData::Client.contributor_type_breakdown(@pelosi_id)
-    #       assert_equal local_breakdown.individual_count, local_breakdown["Individuals"][0]
-    #     end
-    #   end
-
-    # end
+      it "return a contributor type breakdown" do
+        VCR.use_cassette('contributor type breakdown') do
+          local_breakdown = TransparencyData::Client.contributor_type_breakdown(@pelosi_id)
+          assert_equal local_breakdown.individual_count, local_breakdown["Individuals"][0].to_i
+        end
+      end
+    end
 
     # describe "individual (contributor) methods" do
 
