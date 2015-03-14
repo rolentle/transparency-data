@@ -24,24 +24,22 @@ class ClientTest < Minitest::Test
       end
     end
 
-    # describe "when searching contributions" do
+    describe "when searching contributions" do
+      it "return a list" do
+        VCR.use_cassette('contributions') do
+          contributions = TransparencyData::Client.contributions(:contributor_ft => 'steve jobs')
+          assert_equal contributions.class, Array
+          assert contributions.first.has_key?("amount")
+        end
+      end
 
-    #   it "return a list" do
-    #     VCR.use_cassette('contributions') do
-    #       contributions = TransparencyData::Client.contributions(:contributor_ft => 'steve jobs')
-    #       assert_equal contributions.class, Array
-    #       assert contributions.first.has_key?("amount")
-    #     end
-    #   end
-
-    #   it "find all the money Steve Jobs gave between March 3rd and March 10th 2009" do
-    #     VCR.use_cassette('contributions in date range') do
-    #       contributions = TransparencyData::Client.contributions(:contributor_ft => 'steve jobs', :date => {:between => ["2009-03-04", "2009-03-10"]})
-    #       assert_equal contributions.class, Array
-    #     end
-    #   end
-
-    # end
+      it "find all the money Steve Jobs gave between March 3rd and March 10th 2009" do
+        VCR.use_cassette('contributions in date range') do
+          contributions = TransparencyData::Client.contributions(:contributor_ft => 'steve jobs', :date => {:between => ["2009-03-04", "2009-03-10"]})
+          assert_equal contributions.class, Array
+        end
+      end
+    end
 
     # describe "when searching lobbyists" do
 

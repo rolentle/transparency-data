@@ -1,5 +1,12 @@
 module TransparencyData
   class Client
+    def self.contributions(params)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/contributions")
+      url_params = prepare_params(params).merge(apikey: TransparencyData.api_key)
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+    end
 
   #   defaults do
   #     params :apikey => TransparencyData.api_key
@@ -168,10 +175,10 @@ module TransparencyData
       params
     end
 
-  #   def self.handle_response(response)
-  #     # TODO: raise_errors
-  #     JSON.parse(response.body).map {|c| Hashie::Mash.new(c)}
-  #   end
+    def self.handle_response(response)
+      # TODO: raise_errors
+      JSON.parse(response.body).map {|c| Hashie::Mash.new(c)}
+    end
 
   #   def self.process_sectors(sectors)
   #     sectors.each do |sector|
@@ -241,6 +248,5 @@ module TransparencyData
   #       breakdown["#{mash_key}_amount"] = breakdown[api_key][1].to_f
   #     end
   #   end
-
   end
 end
