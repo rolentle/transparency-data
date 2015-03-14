@@ -206,15 +206,12 @@ class ClientTest < Minitest::Test
     end
 
     # describe "recipient methods" do
-
     #   before do
-    #     boone = TransparencyData::Client.entities(:search => "t boone pickens")
-    #     boone.each do |entity|
-    #       @boone_id = entity.id if entity['type'] == "individual"
-    #     end
-    #     ted = TransparencyData::Client.entities(:search => "ted stevens")
-    #     ted.each do |entity|
-    #       @stevens_id = entity.id if entity['type'] == "politician"
+    #     VCR.use_cassette('ids') do
+    #       boone = TransparencyData::Client.entities(:search => "t boone pickens")
+    #       boone.each { |entity| @boone_id = entity.id if entity['type'] == "individual" }
+    #       ted = TransparencyData::Client.entities(:search => "ted stevens")
+    #       ted.each { |entity| @stevens_id = entity.id if entity['type'] == "politician" }
     #     end
     #   end
 
@@ -224,9 +221,6 @@ class ClientTest < Minitest::Test
     #       assert_equal summary.amount.class, Fixnum
     #     end
     #   end
-
     # end
-
   end
-
 end

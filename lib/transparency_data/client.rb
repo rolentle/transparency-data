@@ -318,9 +318,18 @@ module TransparencyData
     #     end
     #   end
 
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
+    def self.recipient_contributor_summary(recipient_id, contributor_id, params=nil)
+      #TODO: is endpoint deprecated?"
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/recipient/#{recipient_id}/contributor/#{contributor_id}/amount")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      Hashie::Mash.new(JSON.parse(response.body))
+    end
 
     #   get(:recipient_contributor_summary) do |recipient_id, contributor_id, api_params|
     #     uri TransparencyData.api_url("/aggregates/recipient/#{recipient_id}/contributor/#{contributor_id}/amount")
@@ -328,6 +337,10 @@ module TransparencyData
     #     handler do |response|
     #       Hashie::Mash.new(JSON.parse(response.body))
     #     end
+    #   end
+
+    #   defaults do
+    #     params :apikey => TransparencyData.api_key
     #   end
 
     def self.prepare_params(params)
