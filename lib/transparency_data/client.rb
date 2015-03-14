@@ -254,9 +254,17 @@ module TransparencyData
     #     end
     #   end
 
-    #   defaults do
-    #     params :apikey => TransparencyData.api_key
-    #   end
+    def self.top_org_recipients(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      handle_response(response)
+    end
 
     #   get(:top_org_recipients) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients")
@@ -265,6 +273,19 @@ module TransparencyData
     #       TransparencyData::Client.handle_response(response)
     #     end
     #   end
+
+    def self.org_party_breakdown(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients/party_breakdown")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      breakdown = Hashie::Mash.new(JSON.parse(response.body))
+      process_org_party_breakdown(breakdown)
+    end
 
     #   get(:org_party_breakdown) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients/party_breakdown")
@@ -275,6 +296,19 @@ module TransparencyData
     #     end
     #   end
 
+    def self.org_level_breakdown(id, params=nil)
+      conn = Faraday.new(url: TransparencyData.api_domain)
+      endpoint = TransparencyData.api_endpoint("/aggregates/org/#{id}/recipients/level_breakdown")
+      url_params = if params
+                     prepare_params(params).merge(apikey: TransparencyData.api_key)
+                   else
+                     { apikey: TransparencyData.api_key }
+                   end
+      response = conn.get(endpoint, url_params)
+      breakdown = Hashie::Mash.new(JSON.parse(response.body))
+      process_org_level_breakdown(breakdown)
+    end
+
     #   get(:org_level_breakdown) do |id, api_params|
     #     uri TransparencyData.api_url("/aggregates/org/#{id}/recipients/level_breakdown")
     #     params TransparencyData::Client.prepare_params(api_params) if api_params
@@ -282,6 +316,10 @@ module TransparencyData
     #       breakdown = Hashie::Mash.new(JSON.parse(response.body))
     #       TransparencyData::Client.process_org_level_breakdown(breakdown)
     #     end
+    #   end
+
+    #   defaults do
+    #     params :apikey => TransparencyData.api_key
     #   end
 
     #   get(:recipient_contributor_summary) do |recipient_id, contributor_id, api_params|
@@ -364,22 +402,22 @@ module TransparencyData
         breakdown
       end
 
-    #   def self.process_org_party_breakdown(breakdown)
-    #     TransparencyData::Client.mashize_key(breakdown, "Democrats", "dem")
-    #     TransparencyData::Client.mashize_key(breakdown, "Republicans", "rep")
-    #     TransparencyData::Client.mashize_key(breakdown, "L", "lib")
-    #     TransparencyData::Client.mashize_key(breakdown, "I", "ind")
-    #     TransparencyData::Client.mashize_key(breakdown, "U", "unknown")
-    #     TransparencyData::Client.mashize_key(breakdown, "Other", "other")
-    #     TransparencyData::Client.mashize_key(breakdown, "3", "third")
-    #     breakdown
-    #   end
+      def self.process_org_party_breakdown(breakdown)
+        TransparencyData::Client.mashize_key(breakdown, "Democrats", "dem")
+        TransparencyData::Client.mashize_key(breakdown, "Republicans", "rep")
+        TransparencyData::Client.mashize_key(breakdown, "L", "lib")
+        TransparencyData::Client.mashize_key(breakdown, "I", "ind")
+        TransparencyData::Client.mashize_key(breakdown, "U", "unknown")
+        TransparencyData::Client.mashize_key(breakdown, "Other", "other")
+        TransparencyData::Client.mashize_key(breakdown, "3", "third")
+        breakdown
+      end
 
-    #   def self.process_org_level_breakdown(breakdown)
-    #     TransparencyData::Client.mashize_key(breakdown, "State", "state")
-    #     TransparencyData::Client.mashize_key(breakdown, "Federal", "federal")
-    #     breakdown
-    #   end
+      def self.process_org_level_breakdown(breakdown)
+        TransparencyData::Client.mashize_key(breakdown, "State", "state")
+        TransparencyData::Client.mashize_key(breakdown, "Federal", "federal")
+        breakdown
+      end
 
       def self.mashize_key(breakdown, api_key, mash_key)
         if breakdown[api_key]
